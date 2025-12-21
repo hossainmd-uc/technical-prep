@@ -215,5 +215,60 @@ guests1 = "aAAbbbb"
 vip_passes2 = "z"
 guests2 = "ZZ"
 
-print(num_VIP_guests2(vip_passes1, guests1))
-print(num_VIP_guests2(vip_passes2, guests2))
+# print(num_VIP_guests2(vip_passes1, guests1))
+# print(num_VIP_guests2(vip_passes2, guests2))
+
+
+def schedule_pattern(pattern, schedule):
+    
+    genres = schedule.split()
+
+    if len(genres) != len(pattern):
+        return False
+
+    char_to_genre = {}
+
+    for char, genre in zip(pattern, genres):
+        if char in char_to_genre:
+            if char_to_genre[char] != genre:
+                return False
+        else:
+            char_to_genre[char] = genre
+
+    return True
+
+pattern1 = "abba"
+schedule1 = "rock jazz jazz rock"
+
+pattern2 = "abba"
+schedule2 = "rock jazz jazz blues"
+
+pattern3 = "aaaa"
+schedule3 = "rock jazz jazz rock"
+
+# print(schedule_pattern(pattern1, schedule1))
+# print(schedule_pattern(pattern2, schedule2))
+# print(schedule_pattern(pattern3, schedule3))
+
+def sort_performers(performer_names, performance_times):
+    """
+    :type performer_names: List[str]
+    :type performance_times: List[int]
+    :rtype: List[str]
+    """
+
+    dict = {}
+
+    for i in range(len(performer_names)):
+        dict[performer_names[i]] = performance_times[i]
+
+    return sorted(dict.items(), key= lambda x: x[1])
+
+performer_names1 = ["Mary", "John", "Emma"]
+performance_times1 = [180, 165, 170]
+
+performer_names2 = ["Alice", "Bob", "Bob"]
+performance_times2 = [155, 185, 150]
+
+print(sort_performers(performer_names1, performance_times1)) 
+print(sort_performers(performer_names2, performance_times2))
