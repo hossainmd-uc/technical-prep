@@ -315,5 +315,161 @@ def edit_post_refined(post):
     return "".join(res)
 
 
-print(edit_post_refined("Boost your engagement with these tips"))
-print(edit_post_refined("Check out my latest vlog"))
+# print(edit_post_refined("Boost your engagement with these tips"))
+# print(edit_post_refined("Check out my latest vlog"))
+
+
+# Problem 1: Time Needed to Stream Movies
+"""
+There are n users in a queue waiting to stream their favorite movies, where the 0th user is at the 
+front of the queue and the (n - 1)th user is at the back of the queue.
+
+You are given a 0-indexed integer array movies of length n where the number of movies that the ith 
+user would like to stream is movies[i].
+
+Each user takes exactly 1 second to stream a movie. A user can only stream 1 movie at a time and 
+has to go back to the end of the queue (which happens instantaneously) in order to stream more movies. 
+If a user does not have any movies left to stream, they will leave the queue.
+
+Return the time taken for the user at position k (0-indexed) to finish streaming all their movies.
+"""
+
+
+def time_required_to_stream(movies, k):
+    """
+    Docstring for time_required_to_stream_movies
+
+    :param movies: list[int]
+    :param k: int
+    """
+
+    if not (k >= 0 and k < len(movies)):
+        raise ValueError("K not a valid movie in movie queue")
+
+    l = [(movies[i], i) for i in range(len(movies))]
+
+    q = deque(l)
+    # print(q)
+
+    seconds = 0
+
+    while q:
+
+        temp = q.popleft()
+        # Edge: movies to stream reaches 0 for specific user
+
+        temp = (temp[0] - 1, temp[1])
+        seconds += 1
+        # Loop exit condition, it tuple of interest reaches 0 movies
+        if temp[1] == k:
+            if temp[0] == 0:
+                return seconds
+        # Append only if non-zero movie value for a user
+        if temp[0] != 0:
+            q.append(temp)  # Add item back to the end
+
+
+# print(time_required_to_stream([2, 3, 2], 2))
+# print(time_required_to_stream([5, 1, 1, 1], 0))
+
+"""
+You are given a list watchlist representing a list of shows sorted by popularity 
+for a particular user. The user wants to discover new shows they haven't heard of 
+before by reversing the list to show the least popular shows first.
+
+Using the two-pointer approach, implement a function reverse_watchlist() that reverses 
+the order of the watchlist in-place. This means that the first show in the given list 
+should become the last, the second show should become the second to last, and so on. 
+Return the reversed list.
+
+Do not use list slicing (e.g., watchlist[::-1]) to achieve this.
+"""
+
+
+def reverse_watchlist(watchlist):
+    '''
+    Docstring for reverse_watchlist
+    
+    :param watchlist: list[str]
+    '''
+    front = 0
+    back = len(watchlist) - 1
+    while front < back:  # important because in even list, front become > back
+        temp = watchlist[front]
+        watchlist[front] = watchlist[back]
+        watchlist[back] = temp
+        
+        front+=1
+        back-=1
+
+    return watchlist
+
+
+watchlist1 = []
+watchlist2 = ["Breaking"]
+watchlist3 = ["Breaking Bad", "Stranger Things", "The Crown", "The Witcher"]
+
+# print(reverse_watchlist(watchlist1))
+# print(reverse_watchlist(watchlist2))
+# print(reverse_watchlist(watchlist3))
+
+# Problem 3: Remove All Adjacent Duplicate Shows
+'''
+You are given a string schedule representing the lineup of shows on a streaming platform, 
+where each character in the string represents a different show. A duplicate removal consists 
+of choosing two adjacent and equal shows and removing them from the schedule.
+
+We repeatedly make duplicate removals on schedule until no further removals can be made.
+
+Return the final schedule after all such duplicate removals have been made. The answer is guaranteed 
+to be unique.
+'''
+def remove_duplicate_shows(schedule):
+    '''
+    Docstring for remove_duplicate_shows
+    
+    :param schedule: str
+    '''
+
+    def check(schedule):
+        final = ''
+        change = False
+        idx = 0
+        while idx < len(schedule):
+            if idx + 1 < len(schedule): # if there is a next element, then check current against next
+                if (schedule[idx] != schedule[idx+1]):
+                    final = final + schedule[idx]
+                    idx+=1
+                else:
+                    idx+=2
+                    change = True
+            else: #if there is no next element, then add current anyways
+                final = final + schedule[idx]
+                idx+=1
+        if change:
+            return check(final)
+        else:
+            return final
+        
+    #outside loop
+    res = check(schedule)
+        
+    return res
+
+def remove_duplicate_shows_refined(schedule):
+    '''
+    Docstring for remove_duplicate_shows
+    
+    :param schedule: str
+    '''
+
+    
+    
+
+# print(remove_duplicate_shows('abbaca'))
+# print(remove_duplicate_shows('azxxzy'))
+
+        
+    
+    
+
