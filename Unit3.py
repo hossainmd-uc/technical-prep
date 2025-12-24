@@ -312,7 +312,7 @@ def edit_post_refined(post):
     while q:
         res.append(q.popleft())
 
-    return "".join(res).strip()
+    return "".join(res)
 
 
 print(edit_post_refined("Boost your engagement with these tips"))
