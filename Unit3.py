@@ -369,8 +369,35 @@ def time_required_to_stream(movies, k):
             q.append(temp)  # Add item back to the end
 
 
+def time_required_to_stream_refined(movies, k):
+    """
+    Docstring for time_required_to_stream_refined
+
+    :param movies: list[int]
+    :param k: int
+    """
+
+    # k represents index of movie of interest
+    # find stream value of k, use as constraint of subtracting from prev and after values
+    max_stream = movies[k]
+    total = 0
+    # those that are before, I will subtract k max until they reach 0, incrementing total each time
+    # those that are after, I will subtract k-1 max until they reach 0, incrementing total each time
+    for i in range(len(movies)):
+        if i < k:
+            total += min(max_stream, movies[i])
+        elif i > k:
+            total += min(max_stream - 1, movies[i])
+
+    return total + max_stream
+
+
 # print(time_required_to_stream([2, 3, 2], 2))
 # print(time_required_to_stream([5, 1, 1, 1], 0))
+
+
+# print(time_required_to_stream_refined([2, 3, 2], 2))
+# print(time_required_to_stream_refined([5, 1, 1, 1], 0))
 
 """
 You are given a list watchlist representing a list of shows sorted by popularity 
@@ -387,20 +414,20 @@ Do not use list slicing (e.g., watchlist[::-1]) to achieve this.
 
 
 def reverse_watchlist(watchlist):
-    '''
+    """
     Docstring for reverse_watchlist
-    
+
     :param watchlist: list[str]
-    '''
+    """
     front = 0
     back = len(watchlist) - 1
     while front < back:  # important because in even list, front become > back
         temp = watchlist[front]
         watchlist[front] = watchlist[back]
         watchlist[back] = temp
-        
-        front+=1
-        back-=1
+
+        front += 1
+        back -= 1
 
     return watchlist
 
@@ -414,7 +441,7 @@ watchlist3 = ["Breaking Bad", "Stranger Things", "The Crown", "The Witcher"]
 # print(reverse_watchlist(watchlist3))
 
 # Problem 3: Remove All Adjacent Duplicate Shows
-'''
+"""
 You are given a string schedule representing the lineup of shows on a streaming platform, 
 where each character in the string represents a different show. A duplicate removal consists 
 of choosing two adjacent and equal shows and removing them from the schedule.
@@ -423,53 +450,219 @@ We repeatedly make duplicate removals on schedule until no further removals can 
 
 Return the final schedule after all such duplicate removals have been made. The answer is guaranteed 
 to be unique.
-'''
+"""
+
+
 def remove_duplicate_shows(schedule):
-    '''
+    """
     Docstring for remove_duplicate_shows
-    
+
     :param schedule: str
-    '''
+    """
 
     def check(schedule):
-        final = ''
+        final = ""
         change = False
         idx = 0
         while idx < len(schedule):
-            if idx + 1 < len(schedule): # if there is a next element, then check current against next
-                if (schedule[idx] != schedule[idx+1]):
+            if idx + 1 < len(
+                schedule
+            ):  # if there is a next element, then check current against next
+                if schedule[idx] != schedule[idx + 1]:
                     final = final + schedule[idx]
-                    idx+=1
+                    idx += 1
                 else:
-                    idx+=2
+                    idx += 2
                     change = True
-            else: #if there is no next element, then add current anyways
+            else:  # if there is no next element, then add current anyways
                 final = final + schedule[idx]
-                idx+=1
+                idx += 1
         if change:
             return check(final)
         else:
             return final
-        
-    #outside loop
+
+    # outside loop
     res = check(schedule)
-        
+
     return res
 
-def remove_duplicate_shows_refined(schedule):
-    '''
-    Docstring for remove_duplicate_shows
-    
-    :param schedule: str
-    '''
 
-    
-    
+def remove_duplicate_shows_refined(schedule):
+    """
+    Docstring for remove_duplicate_shows
+
+    :param schedule: str
+    """
+    # create an empty list to keep track of processing
+    final = []
+
+    # iterate through each element in schedule
+
+    for c in schedule:
+        if len(final) > 0:
+            if final[-1] != c:
+                final.append(c)
+            else:
+                final.pop()
+        else:
+            final.append(c)
+    return "".join(final)
+
 
 # print(remove_duplicate_shows('abbaca'))
 # print(remove_duplicate_shows('azxxzy'))
 
-        
-    
-    
+# print(remove_duplicate_shows_refined('abbaca'))
+# print(remove_duplicate_shows_refined('azxxzy'))
 
+# Problem 4: Minimum Average of Smallest and Largest View Counts
+"""
+You manage a collection of view counts for different shows on a streaming platform. 
+You are given an array view_counts of n integers, where n is even.
+
+You repeat the following procedure n / 2 times:
+
+    Remove the show with the smallest view count, min_view_count, and the show with the 
+    largest view count, max_view_count, from view_counts.
+    Add (min_view_count + max_view_count) / 2 to the list of average view counts average_views.
+
+"""
+import math
+
+
+def minimum_average_view_count(view_counts):
+
+    if len(view_counts) % 2 != 0:
+        raise ValueError("View_counts must be of even length!")
+
+    s = sorted(view_counts)
+    print(s)
+
+    f = 0
+    m = math.inf
+    for _ in range(len(view_counts) // 2):
+        avg = (s[f] + s[-1]) / 2
+        if avg < m:
+
+            m = avg
+        # rushed the gun and forgot these 2 critial lines!! It's always best to write out pseudocode
+        # EVEN if the question is easy af
+        s.pop()
+        f += 1
+
+    return m
+
+
+# print(minimum_average_view_count([7, 8, 3, 4, 15, 13, 4, 1]))
+# print(minimum_average_view_count([1, 9, 8, 3, 10, 5]))
+# print(minimum_average_view_count([1, 2, 3, 7, 8, 9]))
+
+# Problem 5: Minimum Remaining Watchlist After Removing Movies
+
+"""
+You have a watchlist consisting only of uppercase English letters representing movies. 
+Each movie is represented by a unique letter.
+
+You can apply some operations to this watchlist where, in one operation, you can remove
+any occurrence of one of the movie pairs "AB" or "CD" from the watchlist.
+
+Return the minimum possible length of the modified watchlist that you can obtain.
+
+Note that the watchlist concatenates after removing the movie pair and could produce new
+"AB" or "CD" pairs.
+"""
+
+
+def min_remaining_watchlist(watchlist):
+    """
+    Docstring for min_remaining_watchlist
+
+    :param watchlist: str
+    """
+
+    if watchlist != watchlist.upper():
+        raise ValueError("Watchlist must consist of exclusively uppercase letters")
+
+    res = []
+
+    for c in watchlist:
+        if len(res) > 0:
+            if res[-1] + c not in ["AB", "CD"]:
+                res.append(c)
+            else:
+                res.pop()
+        else:
+            res.append(c)
+
+    return len(res)
+
+
+# print(min_remaining_watchlist("ABFCACDB"))
+# print(min_remaining_watchlist("ACBBD"))
+
+# Problem 6: Apply Operations to Show Ratings
+"""
+You are given a 0-indexed array ratings of size n consisting of non-negative integers. 
+Each integer represents the rating of a show in a streaming service.
+
+You need to apply n - 1 operations to this array where, in the ith operation (0-indexed), 
+you will apply the following on the ith element of ratings:
+
+    If ratings[i] == ratings[i + 1], then multiply ratings[i] by 2 and set ratings[i + 1] 
+    to 0. Otherwise, you skip this operation.
+
+After performing all the operations, shift all the 0's to the end of the array.
+
+For example, the array [1,0,2,0,0,1] after shifting all its 0's to the end, is [1,2,1,0,0,0].
+
+Return the resulting array of ratings.
+
+"""
+
+
+def apply_rating_operations(ratings):
+    """
+    Docstring for apply_rating_operations
+
+    :param ratings: list[int]
+    """
+
+    if len(ratings) < 1:
+        raise ValueError("Ratings must contain at least 1 rating")
+
+    # create a new list to maintain order of non-zero elements
+    l = [ratings[0]]
+    zeroes = 0
+    zeroed = False
+
+    # iterate through the ratings
+    for i in range(1, len(ratings)):
+        # compare previous rating with currently processing rating
+        if len(l) > 0:
+            if ratings[i] == 0:
+                zeroed = True
+                zeroes += 1
+                continue
+            if not zeroed:
+                if l[-1] == ratings[i]:
+                    l[-1] *= 2
+                    zeroes += 1
+                    zeroed = True
+                else:
+                    l.append(ratings[i])
+            else:
+                l.append(ratings[i])
+                zeroed = False
+        else:
+            l.append(ratings[i])
+        # print(l)
+
+    return l + [0] * zeroes 
+
+
+# print(apply_rating_operations([1, 2, 2, 1, 1, 0]))
+# print(apply_rating_operations([0, 1]))
+# print(apply_rating_operations([1, 1, 1, 1]))
+# print(apply_rating_operations([2, 0 ,2]))
+# print(apply_rating_operations([2, 0, 0, 2, 2]))
