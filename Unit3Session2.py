@@ -289,49 +289,167 @@ will pay for the ith supply item, considering the special discount.
 
 def final_supply_costs(costs):
     final_cost = []
-    
+
     for i in range(len(costs)):
         found = False
         # print(f"looking for idx where val <{costs[i]}")
-        for j in range (i+1, len(costs)):
+        for j in range(i + 1, len(costs)):
             a = costs[i]
             b = costs[j]
             if costs[j] <= costs[i]:
                 # print(costs[j], 'is <=', costs[i])
                 # print(j)
-                final_cost.append(a-b)
+                final_cost.append(a - b)
                 found = True
                 break
-        if not found: # min item in list case
+        if not found:  # min item in list case
             final_cost.append(costs[i])
-    
-    return final_cost
-            
-def final_supply_costs_stack(costs): # improvement of time to O(n)
-    
-    final_cost = []
-    s = []
-    
-    current = 0
-    while current < len(costs): #while all items have not been processed
-        
-        while len(s) > 0: #while there still items in the stack
-        
-            if len(s) > 1 and s[-1] > costs[current]: #if next > last on stack
-                final_cost.append(s.pop()-costs[current])
-                current+=1
-                 
-        s.append(costs[current]) #add first item and subsequent items
-        
-        final_cost.extend(list(s))
-        
-        
-        
-    
+
     return final_cost
 
-print(final_supply_costs_stack([8, 4, 6, 2, 3]))
+
+def final_supply_costs_stack(costs):  # improvement of time to O(n)
+
+    final_cost = []
+    s = []
+
+    for i in range(len(costs)):
+        for j in range(len(s)):
+            print(j)
+            if (len(s) > j) and (s[j] > costs[i]):
+                p = s.pop(j)
+                final_cost.append(p - costs[i])
+        s.append(costs[i])
+
+    while s:
+        final_cost.append(s.pop())
+
+    return final_cost
+
+
+# print(final_supply_costs_stack([8, 4, 6, 2, 3]))
 # print(final_supply_costs([1, 2, 3, 4, 5]))
 # print(final_supply_costs([10, 1, 1, 6]))
 
+# Problem 2: Find First Symmetrical Landmark Name
 
+"""
+During your global expedition, you encounter a series of landmarks,
+each represented by a string in the array landmarks. Your task is to 
+find and return the first symmetrical landmark name. If there is no such 
+name, return an empty string "".
+
+A landmark name is considered symmetrical if it reads the same forward 
+and backward.
+"""
+
+
+def first_symmetrical_landmark(landmarks):
+    def helper(string):
+        front = 0
+        back = len(string) - 1
+
+        while front < back:
+            if string[front] != string[back]:
+                return ""
+            front += 1
+            back -= 1
+        return string
+
+    for each in landmarks:
+        is_symmetrical = helper(each)
+
+        if is_symmetrical != "":
+            return is_symmetrical
+
+    return ""
+
+
+# Problem 3: Terrain Elevation Match
+
+"""
+During your global expedition, you are mapping out the terrain elevations, where the 
+elevation of each point is represented by an integer. You are given a string terrain 
+of length n, where:
+
+    terrain[i] == 'I' indicates that the elevation at the ith point is lower than the
+    elevation at the i+1th point (elevation[i] < elevation[i + 1]).
+    terrain[i] == 'D' indicates that the elevation at the ith point is higher than the
+    elevation at the i+1th point (elevation[i] > ele vation[i + 1]).
+
+Your task is to reconstruct the elevation sequence and return it as a list of integers.
+If there are multiple valid sequences, return any of them.
+
+Hint: Try using two variables: one to track the smallest available number and one for 
+the largest. As you process each character in the string, assign the smallest number 
+when the next elevation should increase ('I'), and assign the largest number when the
+next elevation should decrease ('D').
+"""
+
+
+def terrain_elevation_match(terrain):
+    highest = len(terrain)
+    lowest = 0
+
+    res = []
+
+    for each in terrain:
+        if each == "I":
+            res.append(lowest)
+            lowest += 1
+        if each == "D":
+            res.append(highest)
+            highest -= 1
+
+    if terrain[-1] == "I":
+        res.append(lowest)
+    else:
+        res.append(highest)
+
+    return res
+
+
+# print(terrain_elevation_match("IDID"))
+# print(terrain_elevation_match("III"))
+# print(terrain_elevation_match("DDI"))
+
+
+def find_the_log_conc_val(logs):
+    final = []
+
+    for i in range(len(logs) // 2):
+        final.append(int(f"{logs[i]}{logs[-1]}"))
+        logs.pop()
+
+    if not len(logs) % 2 == 0:
+        final.append(logs[-1])
+
+    return sum(final)
+
+
+# print(find_the_log_conc_val([7, 52, 2, 4]))
+# print(find_the_log_conc_val([5, 14, 13, 8, 12]))
+
+
+def count_explorers(explorers, supplies):
+    one = explorers.count(1)
+    zero = explorers.count(0)
+    while explorers:
+
+        for each in supplies:
+            if each == 1:
+                if one > 0:
+                    one -= 1
+                else:
+                    return one + zero
+            elif each == 0:
+                if zero > 0:
+                    zero -= 1
+                else:
+                    return one + zero
+
+    return 0
+
+
+print(count_explorers([1,1,0,0], [0,1,0,1]))
+print(count_explorers([1, 1, 1, 0, 0, 1], [1, 0, 0, 0, 1, 1]))
