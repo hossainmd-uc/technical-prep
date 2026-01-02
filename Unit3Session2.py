@@ -451,5 +451,72 @@ def count_explorers(explorers, supplies):
     return 0
 
 
-print(count_explorers([1,1,0,0], [0,1,0,1]))
-print(count_explorers([1, 1, 1, 0, 0, 1], [1, 0, 0, 0, 1, 1]))
+# print(count_explorers([1,1,0,0], [0,1,0,1]))
+# print(count_explorers([1, 1, 1, 0, 0, 1], [1, 0, 0, 0, 1, 1]))
+
+
+"""
+During your global expedition, you are analyzing a binary terrain string, 
+terrain, where 0 represents a valley and 1 represents a hill. You need to 
+count the number of non-empty balanced subsections in the terrain. 
+A balanced subsection is defined as a contiguous segment of the terrain 
+where an equal number of valleys (0s) and hills (1s) appear, and all the 
+0s and 1s are grouped consecutively.
+
+Your task is to return the total number of these balanced subsections. Note
+that subsections that occur multiple times should be counted each time they 
+appear.
+"""
+
+
+def count_balanced_terrain_subsections(terrain):  # a bit tricky
+
+    curr = 1
+    prev = 0
+    total = 0
+
+    for i in range(1, len(terrain)):
+
+        if terrain[i] == terrain[i - 1]:
+            curr += 1
+        else:
+
+            total += min(curr, prev)
+            prev = curr
+            curr = 1
+
+    total += min(curr, prev)
+
+    return total
+
+
+# print(count_balanced_terrain_subsections("00110011"))
+# print(count_balanced_terrain_subsections("10101"))
+
+"""
+During your global expedition, you are monitoring various transmissions, 
+each consisting of some signals separated by a single space. You are given 
+a searchSignal and need to check if it occurs as a prefix to any signal in a 
+transmission.
+
+Return the index of the signal in the transmission (1-indexed) where searchSignal 
+is a prefix of this signal. If searchSignal is a prefix of more than one signal, 
+return the index of the first signal (minimum index). If there is no such signal, 
+return -1.
+
+A prefix of a string s is any leading contiguous substring of s.
+"""
+
+
+def is_prefix_of_signal(transmission, searchSignal):
+
+    l = transmission.split(" ")
+
+    for i in range(len(l)):
+        if l[i].startswith(searchSignal):
+            return i + 1
+    return -1
+
+print(is_prefix_of_signal("i love eating burger", "burg"))
+print(is_prefix_of_signal("this problem is an easy problem", "pro"))
+print(is_prefix_of_signal("i am tired", "you"))
