@@ -666,3 +666,4 @@ def apply_rating_operations(ratings):
 # print(apply_rating_operations([1, 1, 1, 1]))
 # print(apply_rating_operations([2, 0 ,2]))
 # print(apply_rating_operations([2, 0, 0, 2, 2]))
+
